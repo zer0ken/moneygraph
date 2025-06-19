@@ -9,12 +9,16 @@ class AppColors {
     seedColor: seedColor,
     brightness: Brightness.light,
   );
+  // surface color for light theme
+  static const Color surface = Color.fromARGB(255, 246, 247, 244); // Light surface color
 
   // Dark color scheme
   static final ColorScheme darkColorScheme = ColorScheme.fromSeed(
     seedColor: seedColor,
     brightness: Brightness.dark,
   );
+  // surface color for dark theme
+  static const Color darkSurface = Color(0xFF202020); // Dark surface color
 
   // Custom colors not included in the color scheme
   static const Color incomeColor = Color(0xFF4CAF50); // Green

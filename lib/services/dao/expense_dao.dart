@@ -20,8 +20,9 @@ class ExpenseDao implements BaseDao<Expense> {
       {
         'id': expense.id,
         'amount': expense.amount,
-        'transaction_date': expense.transactionDate.millisecondsSinceEpoch,
+        'timestamp': expense.timestamp.millisecondsSinceEpoch,
         'settlement_date': expense.settlementDate?.millisecondsSinceEpoch,
+        'memo': expense.memo,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -52,8 +53,9 @@ class ExpenseDao implements BaseDao<Expense> {
       tableName,
       {
         'amount': expense.amount,
-        'transaction_date': expense.transactionDate.millisecondsSinceEpoch,
+        'timestamp': expense.timestamp.millisecondsSinceEpoch,
         'settlement_date': expense.settlementDate?.millisecondsSinceEpoch,
+        'memo': expense.memo,
       },
       where: 'id = ?',
       whereArgs: [expense.id],
@@ -65,16 +67,32 @@ class ExpenseDao implements BaseDao<Expense> {
     await database.delete(tableName, where: 'id = ?', whereArgs: [id]);
   }
 
+  /// 특정 날짜의 지출 내역 조회
+  Future<List<Expense>> getByDate(DateTime date) async {
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final List<Map<String, dynamic>> maps = await database.query(
+      tableName,
+      where: 'timestamp >= ? AND timestamp < ?',
+      whereArgs: [
+        startOfDay.millisecondsSinceEpoch,
+        endOfDay.millisecondsSinceEpoch,
+      ],
+    );
+
+    return maps.map(_mapToExpense).toList();
+  }
+
   Expense _mapToExpense(Map<String, dynamic> map) {
     return Expense(
-      id: map['id'],
-      amount: map['amount'],
-      transactionDate: DateTime.fromMillisecondsSinceEpoch(
-        map['transaction_date'],
-      ),
+      id: map['id'] as String,
+      amount: map['amount'] as double?,
+      timestamp: DateTime.fromMillisecondsSinceEpoch(map['timestamp'] as int),
       settlementDate: map['settlement_date'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['settlement_date'])
+          ? DateTime.fromMillisecondsSinceEpoch(map['settlement_date'] as int)
           : null,
+      memo: map['memo'] as String?,
     );
   }
 }

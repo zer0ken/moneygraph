@@ -53,17 +53,35 @@ class AppTheme {
         ),
       ),
     ),
+
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: ButtonStyle(
+        padding: WidgetStateProperty.all(
+          EdgeInsets.symmetric(
+            horizontal: AppDimensions.lg,
+            vertical: AppDimensions.sm,
+          ),
+        ),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.md),
+          ),
+        ),
+      ),
+    ),
   );
 
   // 라이트 테마
   static ThemeData lightTheme = _baseTheme.copyWith(
     colorScheme: AppColors.lightColorScheme,
     textTheme: AppTextTheme.light,
+    scaffoldBackgroundColor: AppColors.surface,
   );
 
   // 다크 테마
   static ThemeData darkTheme = _baseTheme.copyWith(
     colorScheme: AppColors.darkColorScheme,
     textTheme: AppTextTheme.dark,
+    scaffoldBackgroundColor: AppColors.darkSurface,
   );
 }

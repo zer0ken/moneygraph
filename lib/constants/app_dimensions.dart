@@ -14,6 +14,7 @@ class AppDimensions {
   static const double elevationExtraHigh = 8.0;
 
   // button heights
+  static const double buttonHeightExtraSmall = 28.0;
   static const double buttonHeightSmall = 36.0;
   static const double buttonHeightMedium = 48.0;
   static const double buttonHeightLarge = 56.0;
@@ -26,8 +27,8 @@ class AppDimensions {
   static const double iconSizeExtraLarge = 40.0;
 
   // border radii
-  static const double borderRadiusSmall = 4.0;
-  static const double borderRadiusMedium = 8.0;
-  static const double borderRadiusLarge = 12.0;
-  static const double borderRadiusExtraLarge = 16.0;
+  static const double borderRadiusSmall = 8.0;
+  static const double borderRadiusMedium = 12.0;
+  static const double borderRadiusLarge = 16.0;
+  static const double borderRadiusExtraLarge = 24.0;
 }

@@ -1,19 +1,20 @@
 import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common/sqlite_api.dart' as sqflite;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../models/expense.dart';
 import '../models/income.dart';
+import '../models/transaction.dart' as models;
 import 'dao/expense_dao.dart';
 import 'dao/income_dao.dart';
 import 'database/migration_manager.dart';
 
 class DatabaseService {
-  static Database? _database;
+  static sqflite.Database? _database;
   static const String expenseTable = 'expenses';
   static const String incomeTable = 'incomes';
-  
+
   final _migrationManager = DatabaseMigrationManager();
   late ExpenseDao _expenseDao;
   late IncomeDao _incomeDao;
@@ -28,19 +29,19 @@ class DatabaseService {
     _database = null; // 새로운 경로 설정 시 데이터베이스 인스턴스 초기화
   }
 
-  Future<Database> get database async {
+  Future<sqflite.Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
     _initializeDaos(_database!);
     return _database!;
   }
 
-  void _initializeDaos(Database db) {
+  void _initializeDaos(sqflite.Database db) {
     _expenseDao = ExpenseDao(db);
     _incomeDao = IncomeDao(db);
   }
 
-  Future<Database> _initDatabase() async {
+  Future<sqflite.Database> _initDatabase() async {
     sqfliteFfiInit();
     final databaseFactory = databaseFactoryFfi;
 
@@ -48,13 +49,14 @@ class DatabaseService {
     if (_databasePath != null) {
       dbPath = _databasePath!;
     } else {
-      final Directory appDocumentsDir = await getApplicationDocumentsDirectory();
+      final Directory appDocumentsDir =
+          await getApplicationDocumentsDirectory();
       dbPath = p.join(appDocumentsDir.path, 'moneygraph.db');
     }
 
     return await databaseFactory.openDatabase(
       dbPath,
-      options: OpenDatabaseOptions(
+      options: sqflite.OpenDatabaseOptions(
         version: DatabaseMigrationManager.currentVersion,
         onCreate: _migrationManager.onCreate,
         onUpgrade: _migrationManager.onUpgrade,
@@ -113,5 +115,23 @@ class DatabaseService {
   Future<void> deleteIncome(String id) async {
     await database;
     await _incomeDao.delete(id);
+  }
+
+  /// 특정 날짜의 모든 거래 내역을 시간순으로 조회
+  Future<List<models.Transaction>> getTransactionsByDate(DateTime date) async {
+    await database;
+
+    // 수입과 지출 내역을 동시에 조회
+    final expenses = await _expenseDao.getByDate(date);
+    final incomes = await _incomeDao.getByDate(date);
+
+    // 수입과 지출을 Transaction으로 변환하고 합침
+    final transactions = [
+      ...expenses.map(models.Transaction.fromExpense),
+      ...incomes.map(models.Transaction.fromIncome),
+    ];    // 거래 시간순으로 정렬
+    transactions.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
+    return transactions;
   }
 }

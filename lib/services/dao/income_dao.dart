@@ -20,7 +20,8 @@ class IncomeDao implements BaseDao<Income> {
       {
         'id': income.id,
         'amount': income.amount,
-        'date': income.date.millisecondsSinceEpoch,
+        'timestamp': income.timestamp.millisecondsSinceEpoch,
+        'memo': income.memo,
       },
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -51,7 +52,8 @@ class IncomeDao implements BaseDao<Income> {
       tableName,
       {
         'amount': income.amount,
-        'date': income.date.millisecondsSinceEpoch,
+        'timestamp': income.timestamp.millisecondsSinceEpoch,
+        'memo': income.memo,
       },
       where: 'id = ?',
       whereArgs: [income.id],
@@ -63,11 +65,29 @@ class IncomeDao implements BaseDao<Income> {
     await database.delete(tableName, where: 'id = ?', whereArgs: [id]);
   }
 
+  /// 특정 날짜의 수입 내역 조회
+  Future<List<Income>> getByDate(DateTime date) async {
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final List<Map<String, dynamic>> maps = await database.query(
+      tableName,
+      where: 'timestamp >= ? AND timestamp < ?',
+      whereArgs: [
+        startOfDay.millisecondsSinceEpoch,
+        endOfDay.millisecondsSinceEpoch,
+      ],
+    );
+
+    return maps.map(_mapToIncome).toList();
+  }
+
   Income _mapToIncome(Map<String, dynamic> map) {
     return Income(
-      id: map['id'],
-      amount: map['amount'],
-      date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      id: map['id'] as String,
+      amount: map['amount'] as double?,
+      timestamp: DateTime.fromMillisecondsSinceEpoch(map['timestamp'] as int),
+      memo: map['memo'] as String?,
     );
   }
 }

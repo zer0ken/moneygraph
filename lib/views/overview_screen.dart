@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:moneygraph/constants/app_dimensions.dart';
-import 'package:moneygraph/widgets/add_transaction_fab.dart';
-import 'package:moneygraph/widgets/chart_widget.dart';
-import 'package:moneygraph/widgets/transaction_list_widget.dart';
-import 'package:moneygraph/widgets/scroll_to_top_fab.dart';
+import 'package:moneygraph/widgets/add_transaction/add_transaction_fab.dart';
+import 'package:moneygraph/widgets/chart/chart_widget.dart';
+import 'package:moneygraph/widgets/transaction_list/transaction_list_widget.dart';
+import 'package:moneygraph/widgets/transaction_list/scroll_to_top_fab.dart';
 import 'package:provider/provider.dart';
 import 'package:moneygraph/viewmodels/transaction_view_model.dart';
 

@@ -32,21 +32,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<DatabaseService>(
-          create: (_) => DatabaseService(),
-        ),
+        Provider<DatabaseService>(create: (_) => DatabaseService()),
         ChangeNotifierProxyProvider<DatabaseService, TransactionViewModel>(
-          create: (context) => TransactionViewModel(context.read<DatabaseService>()),
-          update: (context, database, previous) => 
-            previous ?? TransactionViewModel(database),
+          create: (context) =>
+              TransactionViewModel(context.read<DatabaseService>()),
+          update: (context, database, previous) =>
+              previous ?? TransactionViewModel(database),
         ),
-      ],      child: MaterialApp(
+      ],
+      child: MaterialApp(
         title: 'Money Graph',
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
-        home: Scaffold(
-          body: const ResponsiveScreen(),
-        ),
+        home: Scaffold(body: const ResponsiveScreen()),
       ),
     );
   }

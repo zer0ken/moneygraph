@@ -4,9 +4,9 @@ import 'dart:math' as math;
 import 'package:moneygraph/constants/app_dimensions.dart';
 import 'package:moneygraph/viewmodels/transaction_view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:moneygraph/widgets/transaction/transaction_amount_section.dart';
-import 'package:moneygraph/widgets/transaction/transaction_datetime_section.dart';
-import 'package:moneygraph/widgets/transaction/transaction_memo_section.dart';
+import 'package:moneygraph/widgets/transaction_form/transaction_amount_section.dart';
+import 'package:moneygraph/widgets/transaction_form/transaction_datetime_section.dart';
+import 'package:moneygraph/widgets/transaction_form/transaction_memo_section.dart';
 
 class AddTransactionBottomSheet extends StatefulWidget {
   const AddTransactionBottomSheet({super.key});
